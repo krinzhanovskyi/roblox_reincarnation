@@ -1,30 +1,13 @@
-BG = "#111318"
-CARD = "#1b1e25"
-TEXT = "#f1f3f5"
-MUTED = "#9aa3b2"
-ACCENT = "#7c5cff"
-CARD_BORDER = "#2a2e38"
+"""Shared colors and styles."""
 
+BG = "#101218"
+SURFACE = "#191c24"
+SURFACE_HOVER = "#222631"
+BORDER = "#292e39"
 
-def configure_styles(root):
-    import tkinter.ttk as ttk
+TEXT = "#f2f3f7"
+MUTED = "#969dac"
+ACCENT = "#a78bfa"
+ACCENT_DARK = "#8b6cf0"
 
-    style = ttk.Style(root)
-    style.theme_use("clam")
-    style.configure(
-        "Horizontal.TScale",
-        background=CARD,
-        troughcolor="#303440",
-        sliderthickness=18,
-        bordercolor=CARD,
-        lightcolor=ACCENT,
-        darkcolor=ACCENT,
-    )
-    style.configure(
-        "Demo.TCheckbutton",
-        background=CARD,
-        foreground=TEXT,
-        font=("Segoe UI", 10),
-        focuscolor=CARD,
-    )
-    style.map("Demo.TCheckbutton", background=[("active", CARD)])
+FONT = "Segoe UI"
