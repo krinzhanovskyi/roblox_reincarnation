@@ -1,6 +1,6 @@
 # Reincarnation AFK
 
-A Roblox Anti-AFK settings window prototype built with Python and Tkinter.
+A Roblox Anti-AFK prototype built with Python and Tkinter.
 
 ## Getting started
 
@@ -22,12 +22,7 @@ If you use the Python Launcher, you can run `py app.py` instead.
 - Save settings with `Save & close` and restore them on startup.
 - Dark theme with element sizes adjusted for DPI on startup.
 
-The timer, Anti-AFK actions, Roblox window detection, and window switching
-are not implemented yet. The interval and checkbox only store preferences.
-Scaling changes when moving the open window between monitors are not handled
-yet; restart the application to update the scale.
-
-## Settings
+# Settings
 
 Saving creates a `settings.json` file next to `app.py`. The project directory
 must be writable. Example:
@@ -47,12 +42,27 @@ unsaved changes.
 
 ## Project structure
 
-- `app.py` — Windows DPI setup and application entry point.
-- `settings.py` — settings model, validation, and JSON loading and saving.
-- `ui/main_window.py` — window layout, settings loading, and saving.
-- `ui/interval_card.py` — interval slider drawn on a Canvas.
-- `ui/window_option_card.py` — window switching preference checkbox.
-- `ui/theme.py` — shared colors and font.
+```text
+├── app.py                     # Application entry point
+├── logic/                     # Core application logic
+│   ├── __init__.py
+│   ├── anti_afk.py            # Repeating timer and jump cycles
+│   ├── dpi.py                 # Windows DPI setup
+│   ├── settings.py            # Settings, validation, and JSON persistence
+│   └── windows_backend.py     # Window discovery, switching, and keyboard input
+├── tests/                     # Automated tests
+│   ├── test_anti_afk.py
+│   ├── test_settings.py
+│   └── test_windows_backend.py
+├── ui/                        # Tkinter interface
+│   ├── __init__.py
+│   ├── interval_card.py       # Interval slider
+│   ├── main_window.py         # Main window and settings controls
+│   ├── theme.py               # Shared colors and fonts
+│   └── window_option_card.py  # Window-switching preference
+├── .gitignore
+└── README.md
+```
 
 `settings.json`, temporary files, and Python caches are excluded by `.gitignore`.
 
