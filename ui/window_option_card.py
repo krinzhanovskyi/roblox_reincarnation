@@ -1,12 +1,10 @@
-"""Visual window preference control."""
-
 import tkinter as tk
 
 from ui import theme
 
 
 class WindowOptionCard(tk.Frame):
-    def __init__(self, master, value=False, scale=1.0):
+    def __init__(self, master, value=True, scale=1.0):
         super().__init__(master, bg=theme.SURFACE)
 
         self.scale = scale
@@ -24,7 +22,7 @@ class WindowOptionCard(tk.Frame):
 
         self.checkbox = tk.Checkbutton(
             self,
-            text="Switch to the Roblox window",
+            text="Temporarily switch to Roblox",
             variable=self.switch_to_roblox,
             bg=theme.SURFACE,
             fg=theme.TEXT,
@@ -40,7 +38,7 @@ class WindowOptionCard(tk.Frame):
 
         tk.Label(
             self,
-            text="Preference saved for future use.\nRoblox switching is not implemented yet.",
+            text="Jump once, then return to your previous window.\nWhen off, jump only if Roblox is already active.",
             justify="left",
             bg=theme.SURFACE,
             fg=theme.MUTED,

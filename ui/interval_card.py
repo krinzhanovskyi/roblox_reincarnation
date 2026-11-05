@@ -1,5 +1,3 @@
-"""Reminder interval control."""
-
 import tkinter as tk
 
 from ui import theme
@@ -24,7 +22,7 @@ class IntervalCard(tk.Frame):
 
         tk.Label(
             header,
-            text="Reminder interval",
+            text="Jump interval",
             bg=theme.SURFACE,
             fg=theme.TEXT,
             font=(theme.FONT, 11, "bold"),

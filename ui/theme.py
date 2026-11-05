@@ -1,5 +1,3 @@
-"""Shared colors and styles."""
-
 BG = "#101218"
 SURFACE = "#191c24"
 BORDER = "#292e39"
