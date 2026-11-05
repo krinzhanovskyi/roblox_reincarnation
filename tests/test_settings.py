@@ -1,11 +1,9 @@
-"""Persistence checks without opening the GUI."""
-
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from settings import Settings, load_settings, save_settings
+from logic.settings import Settings, load_settings, save_settings
 
 
 class SettingsTests(unittest.TestCase):
