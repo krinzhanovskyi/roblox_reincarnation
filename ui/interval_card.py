@@ -6,13 +6,17 @@ from ui import theme
 
 
 class IntervalCard(tk.Frame):
-    def __init__(self, master):
+    def __init__(self, master, value=10, scale=1.0):
         super().__init__(master, bg=theme.SURFACE)
 
-        self.value = tk.IntVar(value=10)
-        self.value_label = tk.StringVar(value="10 min")
+        self.scale = scale
+        self.value = tk.IntVar(master=self, value=value)
+        self.value_label = tk.StringVar(master=self, value=f"{value} min")
 
         self._build()
+
+    def px(self, value):
+        return max(1, round(value * self.scale))
 
     def _build(self):
         header = tk.Frame(self, bg=theme.SURFACE)
@@ -36,12 +40,12 @@ class IntervalCard(tk.Frame):
 
         self.slider = tk.Canvas(
             self,
-            height=34,
+            height=self.px(24),
             bg=theme.SURFACE,
             highlightthickness=0,
             cursor="hand2",
         )
-        self.slider.pack(fill="x", pady=(14, 2))
+        self.slider.pack(fill="x", pady=(self.px(14), self.px(2)))
 
         self.slider.bind("<Configure>", self._draw_slider)
         self.slider.bind("<Button-1>", self._on_slider_move)
@@ -71,8 +75,8 @@ class IntervalCard(tk.Frame):
         canvas.delete("all")
 
         width = canvas.winfo_width()
-        center_y = 5
-        padding = 8
+        center_y = canvas.winfo_height() / 2
+        padding = self.px(10)
         usable_width = max(width - padding * 2, 1)
 
         progress = (self.value.get() - 1) / 19
@@ -84,7 +88,7 @@ class IntervalCard(tk.Frame):
             width - padding,
             center_y,
             fill=theme.BORDER,
-            width=6,
+            width=self.px(6),
             capstyle=tk.ROUND,
         )
         canvas.create_line(
@@ -93,22 +97,22 @@ class IntervalCard(tk.Frame):
             knob_x,
             center_y,
             fill=theme.ACCENT,
-            width=6,
+            width=self.px(6),
             capstyle=tk.ROUND,
         )
         canvas.create_oval(
-            knob_x - 7,
-            center_y - 7,
-            knob_x + 7,
-            center_y + 7,
+            knob_x - self.px(7),
+            center_y - self.px(7),
+            knob_x + self.px(7),
+            center_y + self.px(7),
             fill=theme.ACCENT,
             outline=theme.SURFACE,
-            width=2,
+            width=self.px(2),
         )
 
     def _on_slider_move(self, event):
         width = self.slider.winfo_width()
-        padding = 8
+        padding = self.px(10)
         usable_width = max(width - padding * 2, 1)
 
         position = min(max(event.x - padding, 0), usable_width)

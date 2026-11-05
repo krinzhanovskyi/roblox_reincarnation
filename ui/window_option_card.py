@@ -6,10 +6,11 @@ from ui import theme
 
 
 class WindowOptionCard(tk.Frame):
-    def __init__(self, master):
+    def __init__(self, master, value=False, scale=1.0):
         super().__init__(master, bg=theme.SURFACE)
 
-        self.minimize_window = tk.BooleanVar(value=False)
+        self.scale = scale
+        self.switch_to_roblox = tk.BooleanVar(master=self, value=value)
         self._build()
 
     def _build(self):
@@ -24,7 +25,7 @@ class WindowOptionCard(tk.Frame):
         self.checkbox = tk.Checkbutton(
             self,
             text="Switch to the Roblox window",
-            variable=self.minimize_window,
+            variable=self.switch_to_roblox,
             bg=theme.SURFACE,
             fg=theme.TEXT,
             activebackground=theme.SURFACE,
@@ -35,12 +36,14 @@ class WindowOptionCard(tk.Frame):
             borderwidth=0,
             highlightthickness=0,
         )
-        self.checkbox.pack(anchor="w", pady=(12, 0))
+        self.checkbox.pack(anchor="w", pady=(round(12 * self.scale), 0))
 
         tk.Label(
             self,
-            text="Visual setting only; it does not control any application.",
+            text="Preference saved for future use.\nRoblox switching is not implemented yet.",
+            justify="left",
             bg=theme.SURFACE,
             fg=theme.MUTED,
             font=(theme.FONT, 9),
-        ).pack(anchor="w", padx=(25, 0), pady=(3, 0))
+        ).pack(anchor="w", padx=(round(25 * self.scale), 0),
+               pady=(round(3 * self.scale), 0))
