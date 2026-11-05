@@ -1,8 +1,11 @@
 import ctypes
+import logging
 from ctypes import wintypes as w
 from pathlib import PureWindowsPath
 import sys
 import time
+
+logger = logging.getLogger(__name__)
 
 
 class AutomationError(RuntimeError):
@@ -66,6 +69,7 @@ class WindowsBackend:
             w.HANDLE, w.DWORD, w.LPWSTR, ctypes.POINTER(w.DWORD)
         ]
         self.kernel32.QueryFullProcessImageNameW.restype = w.BOOL
+        logger.info("Windows automation backend initialized")
 
     def foreground(self):
         return self.user32.GetForegroundWindow()
@@ -111,6 +115,7 @@ class WindowsBackend:
         if not self.user32.EnumWindows(collect, 0):
             raise AutomationError("Could not enumerate application windows.")
         current = self.foreground()
+        logger.info("Roblox discovery: %s player window(s) found", len(windows))
         if current in windows:
             return current
         if len(windows) > 1:
@@ -138,13 +143,16 @@ class WindowsBackend:
         return self.foreground() == hwnd
 
     def activate(self, hwnd):
+        logger.info("Activating window HWND=%s", hwnd)
         if not self.exists(hwnd):
             raise AutomationError("The target window has been closed.")
         if self.minimized(hwnd):
             self.user32.ShowWindowAsync(hwnd, 9)  # SW_RESTORE
         self.user32.SetForegroundWindow(hwnd)
         if self._wait_foreground(hwnd):
+            logger.info("Window activated HWND=%s", hwnd)
             return
+        logger.warning("Foreground activation blocked; retrying with Alt, HWND=%s", hwnd)
         if any(self.user32.GetAsyncKeyState(key) & 0x8000
                for key in (0x10, 0x11, 0x12, 0x5B, 0x5C)):
             raise AutomationError("Window switching was blocked while a modifier key was held.")
@@ -155,6 +163,7 @@ class WindowsBackend:
             self._key(0x12, up=True)
         if not self._wait_foreground(hwnd):
             raise AutomationError("Windows did not allow switching to the target window.")
+        logger.info("Window activated after retry HWND=%s", hwnd)
 
     def jump(self, hwnd, stop):
         if any(self.user32.GetAsyncKeyState(key) & 0x8000
@@ -165,8 +174,10 @@ class WindowsBackend:
         if self.foreground() != hwnd or not self._is_player(hwnd):
             raise AutomationError("Roblox lost focus. No jump was sent.")
         try:
+            logger.info("Pressing Space in Roblox HWND=%s", hwnd)
             self._key(0x20, scan_code=0x39)
             stop.wait(0.10)
         finally:
             self._key(0x20, up=True, scan_code=0x39)
+            logger.info("Space released")
         return True

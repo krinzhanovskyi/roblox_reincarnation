@@ -1,8 +1,10 @@
 import json
+import logging
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 SETTINGS_PATH = Path(__file__).resolve().parent.parent / "settings.json"
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -21,13 +23,17 @@ def load_settings(path=SETTINGS_PATH):
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
     except FileNotFoundError:
+        logger.info("Settings file not found; using defaults")
         return Settings()
     if not isinstance(data, dict):
         raise ValueError("Settings must be a JSON object.")
-    return Settings(
+    settings = Settings(
         interval_minutes=data.get("interval_minutes", 10),
         switch_to_roblox=data.get("switch_to_roblox", True),
     )
+    logger.info("Settings loaded: interval=%s minutes, switch_to_roblox=%s",
+                settings.interval_minutes, settings.switch_to_roblox)
+    return settings
 
 
 def save_settings(settings, path=SETTINGS_PATH):
@@ -38,5 +44,7 @@ def save_settings(settings, path=SETTINGS_PATH):
             json.dumps(asdict(settings), indent=2) + "\n", encoding="utf-8"
         )
         temporary_path.replace(path)
+        logger.info("Settings saved: interval=%s minutes, switch_to_roblox=%s",
+                    settings.interval_minutes, settings.switch_to_roblox)
     finally:
         temporary_path.unlink(missing_ok=True)
