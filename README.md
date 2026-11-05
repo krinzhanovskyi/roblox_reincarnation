@@ -48,6 +48,7 @@ unsaved changes.
 │   ├── __init__.py
 │   ├── anti_afk.py            # Repeating timer and jump cycles
 │   ├── dpi.py                 # Windows DPI setup
+│   ├── logging_setup.py       # Rotating file logging and exception hooks
 │   ├── settings.py            # Settings, validation, and JSON persistence
 │   └── windows_backend.py     # Window discovery, switching, and keyboard input
 ├── tests/                     # Automated tests
@@ -64,7 +65,7 @@ unsaved changes.
 └── README.md
 ```
 
-`settings.json`, temporary files, and Python caches are excluded by `.gitignore`.
+`settings.json`, temporary files, Python caches, and `logs/` are excluded by `.gitignore`.
 
 ## Tests
 
