@@ -1,4 +1,5 @@
 import tkinter as tk
+import logging
 from tkinter import messagebox
 from queue import Empty, Queue
 from threading import Event, Thread
@@ -11,6 +12,8 @@ from logic.windows_backend import AutomationError, WindowsBackend
 from ui import theme
 from ui.interval_card import IntervalCard
 from ui.window_option_card import WindowOptionCard
+
+logger = logging.getLogger(__name__)
 
 
 class SettingsWindow(tk.Tk):
@@ -34,6 +37,7 @@ class SettingsWindow(tk.Tk):
         try:
             self.settings = load_settings()
         except (OSError, ValueError) as error:
+            logger.exception("Could not load settings; using defaults")
             self.settings = Settings()
             load_error = str(error)
         self._build()
@@ -51,6 +55,11 @@ class SettingsWindow(tk.Tk):
 
     def px(self, value):
         return max(1, round(value * self.scale))
+
+    def report_callback_exception(self, exc_type, exc_value, traceback):
+        logger.error("Unhandled interface callback exception",
+                     exc_info=(exc_type, exc_value, traceback))
+        super().report_callback_exception(exc_type, exc_value, traceback)
 
     def _build(self):
         content = tk.Frame(self, bg=theme.BG, padx=self.px(28), pady=self.px(26))
@@ -132,6 +141,7 @@ class SettingsWindow(tk.Tk):
         try:
             save_settings(settings)
         except OSError as error:
+            logger.exception("Could not save settings")
             messagebox.showerror("Could not save settings", str(error), parent=self)
             return False
         self.settings = settings
@@ -139,6 +149,7 @@ class SettingsWindow(tk.Tk):
 
     def _toggle_session(self):
         if self._worker and self._worker.is_alive():
+            logger.info("User requested session stop")
             self._stop.set()
             self.start_button.configure(state="disabled", text="Stopping…")
             self.status.set("Stopping and restoring the previous window…")
@@ -147,6 +158,7 @@ class SettingsWindow(tk.Tk):
             backend = WindowsBackend()
             backend.find_roblox()
         except (AutomationError, OSError) as error:
+            logger.exception("Cannot start Anti-AFK")
             messagebox.showerror("Cannot start Anti-AFK", str(error), parent=self)
             return
         if not self._save_settings():
@@ -160,6 +172,7 @@ class SettingsWindow(tk.Tk):
         )
         self.last_result.set("Running. Setting changes apply to the next session.")
         self.start_button.configure(text="Stop")
+        logger.info("User requested session start")
         self._worker.start()
 
     def _poll_session(self):
@@ -193,6 +206,7 @@ class SettingsWindow(tk.Tk):
         self.after(100, self._poll_session)
 
     def _on_close(self):
+        logger.info("Window close requested; stopping session and waiting for cleanup")
         self._closing = True
         self._stop.set()
         self.start_button.configure(state="disabled")
