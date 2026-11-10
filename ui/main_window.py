@@ -1,5 +1,6 @@
 import tkinter as tk
 import logging
+from pathlib import Path
 from tkinter import messagebox
 from queue import Empty, Queue
 from threading import Event, Thread
@@ -19,6 +20,10 @@ logger = logging.getLogger(__name__)
 class SettingsWindow(tk.Tk):
     def __init__(self):
         super().__init__()
+
+        icon_path = Path(__file__).resolve().parent.parent / "icon_1024.png"
+        self._app_icon = tk.PhotoImage(master=self, file=str(icon_path))
+        self.iconphoto(True, self._app_icon)
 
         self.title("Reincarnation AFK — Settings")
 
